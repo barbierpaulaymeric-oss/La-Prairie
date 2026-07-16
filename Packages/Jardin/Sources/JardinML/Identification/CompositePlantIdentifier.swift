@@ -25,7 +25,7 @@ public final class CompositePlantIdentifier: @unchecked Sendable {
 
     let bundledIdentifier: BundledCoreMLIdentifier?
     let taxonomyIdentifier: VisionTaxonomyIdentifier
-    var configuration: Configuration
+    public var configuration: Configuration
 
     public init(configuration: Configuration = Configuration(),
                 bundledModelName: String = "PlantClassifier") {
