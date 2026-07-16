@@ -1,0 +1,31 @@
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xccheckout
+*.moved-aside
+*.xcscmblueprint
+
+# Projet généré par XcodeGen (source de vérité : project.yml)
+JardinIntelligent.xcodeproj/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# Python (scripts d'entraînement)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Sorties d'entraînement ML
+MLTraining/output/
+MLTraining/datasets/
+*.mlpackage
+*.mlmodelc
+
+# macOS
+.DS_Store
