@@ -26,8 +26,12 @@ public enum WateringPlanner {
 
         var postponed = false
         var reason = "Intervalle de \(interval) j selon le besoin en eau."
-        if let rain = rainProbabilityTomorrow, rain >= rainPostponeThreshold,
-           calendar.isDate(next, inSameDayAs: now) || calendar.isDateInTomorrow(next) {
+        // Report d'un jour si la pluie est probable et l'arrosage imminent
+        // (aujourd'hui ou demain, relativement à `now` — pas à la date système).
+        let daysAway = calendar.dateComponents([.day],
+                                               from: calendar.startOfDay(for: now),
+                                               to: calendar.startOfDay(for: next)).day ?? .max
+        if let rain = rainProbabilityTomorrow, rain >= rainPostponeThreshold, daysAway <= 1 {
             next = calendar.date(byAdding: .day, value: 1, to: next) ?? next
             postponed = true
             reason = "Pluie prévue (\(Int(rain * 100)) %) : arrosage reporté d'un jour."

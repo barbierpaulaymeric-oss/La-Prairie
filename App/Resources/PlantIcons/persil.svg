@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <line x1="256.0" y1="449.5" x2="194.1" y2="191.5" stroke="#2E8B57" stroke-width="15.4" stroke-linecap="round"/>
+  <ellipse cx="142.5" cy="148.5" rx="46.1" ry="46.1" fill="#2E8B57" fill-opacity="0.9"/>
+  <ellipse cx="245.8" cy="148.5" rx="46.1" ry="46.1" fill="#2E8B57" fill-opacity="0.9"/>
+  <ellipse cx="194.1" cy="114.1" rx="46.1" ry="46.1" fill="#2E8B57" fill-opacity="0.9"/>
+  <line x1="256.0" y1="449.5" x2="256.0" y2="191.5" stroke="#2E8B57" stroke-width="15.4" stroke-linecap="round"/>
+  <ellipse cx="204.4" cy="148.5" rx="46.1" ry="46.1" fill="#2E8B57" fill-opacity="0.9"/>
+  <ellipse cx="307.6" cy="148.5" rx="46.1" ry="46.1" fill="#2E8B57" fill-opacity="0.9"/>
+  <ellipse cx="256.0" cy="114.1" rx="46.1" ry="46.1" fill="#2E8B57" fill-opacity="0.9"/>
+  <line x1="256.0" y1="449.5" x2="317.9" y2="191.5" stroke="#2E8B57" stroke-width="15.4" stroke-linecap="round"/>
+  <ellipse cx="266.2" cy="148.5" rx="46.1" ry="46.1" fill="#2E8B57" fill-opacity="0.9"/>
+  <ellipse cx="369.5" cy="148.5" rx="46.1" ry="46.1" fill="#2E8B57" fill-opacity="0.9"/>
+  <ellipse cx="317.9" cy="114.1" rx="46.1" ry="46.1" fill="#2E8B57" fill-opacity="0.9"/>
+</svg>
