@@ -23,6 +23,17 @@ jobs:
         run: xcodebuild -version && swift --version
       - name: Tests
         run: swift test --package-path Packages/Jardin
+      - name: Rapport de crash (diagnostic)
+        if: failure()
+        run: |
+          sleep 10
+          ls -la ~/Library/Logs/DiagnosticReports/ 2>/dev/null || echo "aucun rapport"
+          for f in ~/Library/Logs/DiagnosticReports/*.ips; do
+            [ -e "$f" ] || continue
+            echo "===== $f ====="
+            head -c 24000 "$f"
+            echo
+          done
 
   build-ios:
     name: Build app (simulateur iOS)
