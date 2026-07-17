@@ -22,9 +22,17 @@ public final class PlantMO: NSManagedObject, Identifiable {
     @NSManaged public var createdAt: Date?
     @NSManaged public var updatedAt: Date?
     @NSManaged public var species: PlantSpeciesMO?
-    @NSManaged public var zone: GardenZoneMO?
+    /// Nom modélisé `inZone` : « zone » écraserait le sélecteur système
+    /// `-[NSObject zone]` (NSZone) — crash garanti dans la machinerie Core Data.
+    @NSManaged public var inZone: GardenZoneMO?
     @NSManaged public var observations: NSSet?
     @NSManaged public var harvests: NSSet?
+
+    /// Façade Swift (sans @objc, donc sans collision de sélecteur) pour l'API naturelle.
+    public var zone: GardenZoneMO? {
+        get { inZone }
+        set { inZone = newValue }
+    }
 
     public override func awakeFromInsert() {
         super.awakeFromInsert()

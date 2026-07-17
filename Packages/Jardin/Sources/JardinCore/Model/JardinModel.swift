@@ -39,7 +39,9 @@ public enum JardinModel {
             attr("createdAt", .dateAttributeType),
             attr("updatedAt", .dateAttributeType),
             rel("species", to: species, toMany: false, deleteRule: .nullifyDeleteRule),
-            rel("zone", to: zone, toMany: false, deleteRule: .nullifyDeleteRule),
+            // « zone » est interdit : collision avec -[NSObject zone] (voir PlantMO).
+            rel("inZone", to: zone, toMany: false, deleteRule: .nullifyDeleteRule,
+                renamedFrom: "zone"),
             rel("observations", to: observation, toMany: true, deleteRule: .cascadeDeleteRule),
             rel("harvests", to: harvest, toMany: true, deleteRule: .cascadeDeleteRule),
         ]
@@ -132,7 +134,7 @@ public enum JardinModel {
 
         // Inverses : câblés sur les descriptions installées dans les entités.
         wireInverse(plant, "species", species, "plants")
-        wireInverse(plant, "zone", zone, "plants")
+        wireInverse(plant, "inZone", zone, "plants")
         wireInverse(plant, "observations", observation, "plant")
         wireInverse(plant, "harvests", harvest, "plant")
 
@@ -164,7 +166,8 @@ public enum JardinModel {
     private static func rel(_ name: String,
                             to destination: NSEntityDescription,
                             toMany: Bool,
-                            deleteRule: NSDeleteRule) -> NSRelationshipDescription {
+                            deleteRule: NSDeleteRule,
+                            renamedFrom: String? = nil) -> NSRelationshipDescription {
         let relationship = NSRelationshipDescription()
         relationship.name = name
         relationship.destinationEntity = destination
@@ -172,6 +175,7 @@ public enum JardinModel {
         relationship.maxCount = toMany ? 0 : 1
         relationship.isOptional = true
         relationship.deleteRule = deleteRule
+        relationship.renamingIdentifier = renamedFrom
         return relationship
     }
 
