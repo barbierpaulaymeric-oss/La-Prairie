@@ -142,4 +142,16 @@ public enum Formatters {
     public static func percent(_ value: Double) -> String {
         "\(value >= 0 ? "+" : "−")\(Int(abs(value) * 100)) %"
     }
+
+    /// Longueur lisible : « 35 cm » sous le mètre, « 1,5 m » au-delà.
+    public static func meters(_ value: Double) -> String {
+        if value < 1 {
+            return "\(Int((value * 100).rounded())) cm"
+        }
+        let rounded = (value * 10).rounded() / 10
+        if rounded == rounded.rounded() {
+            return "\(Int(rounded)) m"
+        }
+        return String(format: "%.1f m", rounded).replacingOccurrences(of: ".", with: ",")
+    }
 }

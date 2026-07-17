@@ -35,7 +35,9 @@ public struct PlantListView: View {
                                    : "Ajoutez votre première plante ou identifiez-la par photo.")
             }
             ForEach(filtered) { plant in
-                NavigationLink(value: plant.id) {
+                // NavigationLink(value: UUID?) pousse un UUID non optionnel :
+                // la destination doit être enregistrée pour UUID.self, pas UUID?.self.
+                NavigationLink(value: plant.id ?? UUID()) {
                     PlantRowView(plant: plant)
                 }
             }
@@ -44,8 +46,8 @@ public struct PlantListView: View {
             }
         }
         .navigationTitle("Mes plantes")
-        .navigationDestination(for: UUID?.self) { id in
-            if let id, let plant = store.plant(withID: id) {
+        .navigationDestination(for: UUID.self) { id in
+            if let plant = store.plant(withID: id) {
                 PlantDetailView(plant: plant)
             }
         }

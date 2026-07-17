@@ -105,6 +105,21 @@ final class PersistenceTests: XCTestCase {
         XCTAssertEqual(plant.wateringIntervalDays, 10)
     }
 
+    func testEffectiveSpreadPriority() {
+        let species = SeedService.insert(SpeciesCatalog.seed(named: "Tomate")!, in: context)
+        let plant = PlantMO(context: context)
+        plant.species = species
+        XCTAssertEqual(plant.effectiveSpreadM, species.spreadM, "Fiche par défaut")
+
+        plant.customSpreadM = 1.2
+        XCTAssertEqual(plant.effectiveSpreadM, 1.2, "La personnalisation prime")
+
+        let bare = PlantMO(context: context)
+        bare.category = .fruitier
+        XCTAssertEqual(bare.effectiveSpreadM, PlantCategory.fruitier.defaultSpreadM,
+                       "Sans fiche : défaut de catégorie")
+    }
+
     @MainActor
     func testGardenStoreInsightDeduplication() {
         let store = GardenStore(persistence: controller)

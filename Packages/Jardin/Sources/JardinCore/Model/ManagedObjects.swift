@@ -18,6 +18,7 @@ public final class PlantMO: NSManagedObject, Identifiable {
     @NSManaged public var customWaterNeedRaw: String?
     @NSManaged public var customSunNeedRaw: String?
     @NSManaged public var customSoil: String?
+    @NSManaged public var customSpreadM: Double
     @NSManaged public var createdAt: Date?
     @NSManaged public var updatedAt: Date?
     @NSManaged public var species: PlantSpeciesMO?
@@ -65,6 +66,13 @@ public final class PlantMO: NSManagedObject, Identifiable {
         wateringIntervalOverride > 0 ? Int(wateringIntervalOverride) : effectiveWaterNeed.baseWateringIntervalDays
     }
 
+    /// Emprise au sol (diamètre en mètres) : personnalisation > fiche > défaut de catégorie.
+    public var effectiveSpreadM: Double {
+        if customSpreadM > 0 { return customSpreadM }
+        if let spread = species?.spreadM, spread > 0 { return spread }
+        return category.defaultSpreadM
+    }
+
     public var observationList: [ObservationMO] {
         (observations as? Set<ObservationMO> ?? []).sorted { ($0.date ?? .distantPast) > ($1.date ?? .distantPast) }
     }
@@ -108,6 +116,7 @@ public final class PlantSpeciesMO: NSManagedObject, Identifiable {
     @NSManaged public var sowingMonthsRaw: String?
     @NSManaged public var harvestMonthsRaw: String?
     @NSManaged public var lifespanYears: Double
+    @NSManaged public var spreadM: Double
     @NSManaged public var companionsRaw: String?
     @NSManaged public var antagonistsRaw: String?
     @NSManaged public var averageYieldKg: Double

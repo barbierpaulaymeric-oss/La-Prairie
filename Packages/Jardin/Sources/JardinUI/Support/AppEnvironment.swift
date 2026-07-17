@@ -34,6 +34,7 @@ public final class AppEnvironment: ObservableObject {
         )
         self.weatherProvider = WeatherProviderFactory.make()
         SeedService.seedSpeciesIfNeeded(in: persistence.container.viewContext)
+        SeedService.updateBuiltInCatalog(in: persistence.container.viewContext)
     }
 
     /// À appeler quand les réglages de l'API distante changent.

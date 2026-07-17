@@ -28,6 +28,17 @@ public enum PlantCategory: String, CaseIterable, Codable, Identifiable, Sendable
         case .autre: return "sparkles"
         }
     }
+
+    /// Emprise au sol par défaut (diamètre en mètres) quand la fiche n'en précise pas.
+    public var defaultSpreadM: Double {
+        switch self {
+        case .aromatique: return 0.35
+        case .potager: return 0.5
+        case .fruitier: return 3.0
+        case .fleur: return 0.3
+        case .autre: return 0.4
+        }
+    }
 }
 
 public enum WaterNeed: String, CaseIterable, Codable, Identifiable, Sendable {

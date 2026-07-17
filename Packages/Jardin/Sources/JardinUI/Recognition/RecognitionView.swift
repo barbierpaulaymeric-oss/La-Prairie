@@ -104,8 +104,7 @@ public struct RecognitionView: View {
                         } label: {
                             VStack(alignment: .leading, spacing: 5) {
                                 HStack {
-                                    PlantIconView(kind: PlantIconKind.detect(name: candidate.name, category: .autre),
-                                                  size: 30)
+                                    PlantIconView(name: candidate.name, category: .autre, size: 30)
                                     VStack(alignment: .leading, spacing: 1) {
                                         Text(candidate.name).font(.body.weight(.medium))
                                         if let scientific = candidate.scientificName {
