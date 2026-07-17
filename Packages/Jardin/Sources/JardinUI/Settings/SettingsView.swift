@@ -71,7 +71,9 @@ public struct SettingsView: View {
                     .foregroundStyle(store.persistence.cloudSyncActive ? Theme.leaf : .secondary)
             }
             if !store.persistence.cloudSyncActive {
-                Text("Vérifiez que vous êtes connecté à iCloud et que l'app dispose de l'entitlement CloudKit. Les données restent enregistrées localement.")
+                Text(PersistenceController.cloudSyncEnabledInBuild
+                    ? "Connectez un compte iCloud (Réglages système) pour activer la synchronisation. Vos données restent enregistrées localement."
+                    : "Cette version est compilée sans synchronisation iCloud. Pour l'activer : capacité iCloud (CloudKit) dans Xcode et drapeau JIEnableCloudSync à YES dans l'Info.plist. Vos données restent enregistrées localement.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
