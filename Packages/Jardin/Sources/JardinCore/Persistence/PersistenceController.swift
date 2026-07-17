@@ -28,6 +28,15 @@ public final class PersistenceController: ObservableObject {
             ?? "iCloud.com.laprairie.jardinintelligent"
     }
 
+    /// Vrai si l'app dispose d'une configuration iCloud active (entitlement présent
+    /// **et** compte connecté). Indispensable : sans entitlement, CloudKit lève une
+    /// NSException fatale sur un thread d'arrière-plan — incatchable en Swift — dès
+    /// que `NSPersistentCloudKitContainer` initialise son `CKContainer`. On ne
+    /// configure donc la synchronisation que si ce jeton existe.
+    public static var iCloudAccountAvailable: Bool {
+        FileManager.default.ubiquityIdentityToken != nil
+    }
+
     public init(inMemory: Bool = false, cloudKitEnabled: Bool = true) {
         container = NSPersistentCloudKitContainer(name: "Jardin", managedObjectModel: JardinModel.shared)
 
@@ -39,7 +48,7 @@ public final class PersistenceController: ObservableObject {
             description.url = storeURL
             description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
             description.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
-            if cloudKitEnabled {
+            if cloudKitEnabled, Self.iCloudAccountAvailable {
                 description.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(
                     containerIdentifier: Self.cloudContainerIdentifier
                 )

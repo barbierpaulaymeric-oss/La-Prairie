@@ -98,6 +98,10 @@ développeur) :
 2. Laisser Xcode créer le conteneur `iCloud.com.laprairie.jardinintelligent`
    (ou changer l'identifiant dans l'Info.plist, clé
    `JIICloudContainerIdentifier`, et dans les entitlements).
+3. Lancer l'app avec un **compte iCloud connecté** (Réglages de l'appareil ou
+   du simulateur). Sans compte ou sans entitlement, l'app détecte l'absence de
+   configuration iCloud (`ubiquityIdentityToken`) et reste sereinement en
+   stockage local — l'état est visible dans *Réglages → iCloud*.
 
 <details>
 <summary>Variante macOS / multiplateforme via XcodeGen (optionnelle)</summary>
