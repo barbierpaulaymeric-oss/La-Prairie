@@ -1,5 +1,6 @@
-# Projet Xcode généré par XcodeGen : `brew install xcodegen && xcodegen generate`
-# (le .xcodeproj n'est pas versionné ; ce fichier est la source de vérité).
+# Variante multiplateforme (iOS + macOS, entitlements pré-câblés) via XcodeGen :
+# `brew install xcodegen && xcodegen generate` — ATTENTION : régénère et remplace
+# le JardinIntelligent.xcodeproj committé (version iOS-simulateur sans config).
 name: JardinIntelligent
 options:
   bundleIdPrefix: com.laprairie

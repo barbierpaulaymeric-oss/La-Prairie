@@ -7,9 +7,6 @@ xcuserdata/
 *.moved-aside
 *.xcscmblueprint
 
-# Projet généré par XcodeGen (source de vérité : project.yml)
-JardinIntelligent.xcodeproj/
-
 # Swift Package Manager
 .build/
 .swiftpm/

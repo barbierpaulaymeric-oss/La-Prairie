@@ -76,35 +76,40 @@ Toutes les opérations longues (analyse photo, réseau, sync) sont en
 
 ## Prise en main
 
-Prérequis : Xcode 15+, macOS 14+.
+Prérequis : Xcode 15+ sur macOS 14+. **Aucun outil à installer.**
 
 ```bash
 git clone <repo> && cd La-Prairie
-
-# Le .xcodeproj est généré (non versionné) — source de vérité : project.yml
-brew install xcodegen
-xcodegen generate
 open JardinIntelligent.xcodeproj
 ```
 
-Puis dans Xcode :
+Le projet committé est prêt à l'emploi : sélectionner un **simulateur iPhone**
+et ⌘R. Il est volontairement configuré **sans signing team ni capacités**
+(iCloud, WeatherKit) pour se lancer immédiatement — l'app fonctionne alors en
+stockage local, sans météo (dégradations prévues par le code). Pour tout voir
+tourner tout de suite : **Réglages → Mode démo**.
+
+Pour activer la synchronisation iCloud et la météo (appareil réel, compte
+développeur) :
 1. Cible **JardinIntelligent** → *Signing & Capabilities* → sélectionner votre
-   **Team** (ou renseigner `DEVELOPMENT_TEAM` dans `project.yml`).
-2. Laisser Xcode créer le conteneur iCloud
-   `iCloud.com.laprairie.jardinintelligent` (ou changer l'identifiant dans
-   `project.yml` **et** dans les deux fichiers `.entitlements`).
-3. Sans compte développeur payant : supprimer les capacités iCloud/WeatherKit
-   des entitlements — l'app fonctionne en local et sans météo.
+   **Team**, puis ajouter les capacités *iCloud (CloudKit)*, *Push
+   Notifications* et *WeatherKit* — ou pointer `CODE_SIGN_ENTITLEMENTS` vers
+   `App/Support/JardinIntelligent-iOS.entitlements` fourni.
+2. Laisser Xcode créer le conteneur `iCloud.com.laprairie.jardinintelligent`
+   (ou changer l'identifiant dans l'Info.plist, clé
+   `JIICloudContainerIdentifier`, et dans les entitlements).
 
 <details>
-<summary>Sans XcodeGen (création manuelle du projet)</summary>
+<summary>Variante macOS / multiplateforme via XcodeGen (optionnelle)</summary>
 
-1. Xcode → *File > New > Project…* > App multiplateforme « JardinIntelligent ».
-2. Glisser le dossier `Packages/Jardin` dans le navigateur de projet, puis
-   ajouter les produits `JardinCore`, `JardinML`, `JardinUI` à la cible.
-3. Remplacer le fichier App généré par `App/Sources/JardinIntelligentApp.swift`.
-4. Reporter les clés Info.plist et les entitlements depuis `project.yml` /
-   `App/Support/`.
+Le projet committé cible iOS/iPadOS (simulateur sans configuration). Pour une
+cible **iOS + macOS** avec entitlements pré-câblés, générez le projet complet :
+
+```bash
+brew install xcodegen
+xcodegen generate   # régénère JardinIntelligent.xcodeproj depuis project.yml
+```
+(Renseignez `DEVELOPMENT_TEAM` dans `project.yml`.)
 </details>
 
 ## Mode démo
