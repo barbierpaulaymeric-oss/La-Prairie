@@ -79,7 +79,7 @@ public struct SettingsView: View {
     }
 
     private var notificationSection: some View {
-        Section("Notifications") {
+        Section {
             Toggle("Rappels (arrosage, récoltes, alertes)", isOn: $notificationsEnabled)
                 .onChange(of: notificationsEnabled) { _, _ in
                     Task { await store.refreshNotificationSchedules() }
@@ -95,13 +95,15 @@ public struct SettingsView: View {
                     await store.refreshNotificationSchedules()
                 }
             }
+        } header: {
+            Text("Notifications")
         } footer: {
             Text("La fréquence se personnalise plante par plante dans sa fiche. La météo (WeatherKit) requiert l'autorisation de localisation et reporte l'arrosage en cas de pluie prévue.")
         }
     }
 
     private var recognitionSection: some View {
-        Section("Reconnaissance — API de secours") {
+        Section {
             Picker("Fournisseur", selection: $remoteProvider) {
                 Text("Aucun (100 % local)").tag("")
                 ForEach(RemoteAPIConfiguration.Provider.allCases, id: \.rawValue) { provider in
@@ -111,6 +113,8 @@ public struct SettingsView: View {
             if !remoteProvider.isEmpty {
                 SecureField("Clé API", text: $remoteAPIKey)
             }
+        } header: {
+            Text("Reconnaissance — API de secours")
         } footer: {
             Text("Optionnel : si la reconnaissance locale (vos photos + Vision + modèle embarqué) manque de confiance, l'app peut interroger Pl@ntNet ou Plant.id. La photo est alors envoyée à ce service.")
         }
@@ -141,7 +145,7 @@ public struct SettingsView: View {
     }
 
     private var learningSection: some View {
-        Section("Données d'apprentissage") {
+        Section {
             LabeledContent("Exemples enregistrés", value: "\(store.learningExampleCount())")
             Button("Exporter le dataset (photos + tags)") {
                 exportLearningDataset()
@@ -154,6 +158,8 @@ public struct SettingsView: View {
             Button("Importer un dataset…") {
                 showLearningImporter = true
             }
+        } header: {
+            Text("Données d'apprentissage")
         } footer: {
             Text("Le dataset (manifest.json + images) sert à réentraîner un modèle Core ML avec MLTraining/retrain_from_export.py, ou à retrouver vos exemples sur un autre appareil.")
         }
