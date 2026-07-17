@@ -1,0 +1,81 @@
+# Variante multiplateforme (iOS + macOS, entitlements pré-câblés) via XcodeGen :
+# `brew install xcodegen && xcodegen generate` — ATTENTION : régénère et remplace
+# le JardinIntelligent.xcodeproj committé (version iOS-simulateur sans config).
+name: JardinIntelligent
+options:
+  bundleIdPrefix: com.laprairie
+  deploymentTarget:
+    iOS: "17.0"
+    macOS: "14.0"
+  createIntermediateGroups: true
+
+packages:
+  Jardin:
+    path: Packages/Jardin
+
+targets:
+  JardinIntelligent:
+    type: application
+    supportedDestinations: [iOS, macOS]
+    sources:
+      - path: App/Sources
+      - path: App/Resources
+        buildPhase: resources
+        optional: true
+    dependencies:
+      - package: Jardin
+        products: [JardinCore, JardinML, JardinUI]
+    info:
+      path: App/Support/Info.plist
+      properties:
+        CFBundleDisplayName: Jardin Intelligent
+        CFBundleShortVersionString: "1.0.0"
+        CFBundleVersion: "1"
+        ITSAppUsesNonExemptEncryption: false
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UIBackgroundModes:
+          - remote-notification
+        NSCameraUsageDescription: >-
+          La caméra permet de photographier vos plantes pour les identifier
+          et suivre leur croissance.
+        NSPhotoLibraryUsageDescription: >-
+          Votre photothèque permet d'importer des photos de plantes pour les
+          identifier et documenter vos observations.
+        NSPhotoLibraryAddUsageDescription: >-
+          L'app peut enregistrer dans votre photothèque les photos prises
+          pour vos plantes.
+        NSLocationWhenInUseUsageDescription: >-
+          Votre position (optionnelle) sert uniquement à obtenir la météo
+          locale pour ajuster les rappels d'arrosage.
+        JIICloudContainerIdentifier: iCloud.com.laprairie.jardinintelligent
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.laprairie.jardinintelligent
+        CODE_SIGN_ENTITLEMENTS: App/Support/JardinIntelligent-iOS.entitlements
+        "CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": App/Support/JardinIntelligent-macOS.entitlements
+        SWIFT_VERSION: "5.9"
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SUPPORTS_MACCATALYST: false
+        ENABLE_USER_SCRIPT_SANDBOXING: true
+        DEVELOPMENT_TEAM: ""   # ← votre Team ID Apple Developer
+
+schemes:
+  JardinIntelligent:
+    build:
+      targets:
+        JardinIntelligent: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      # Les tests unitaires vivent dans le package : Packages/Jardin
+      # (`swift test` ou schéma « Jardin-Package » dans Xcode).
+    archive:
+      config: Release
