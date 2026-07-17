@@ -239,8 +239,9 @@ swift test          # ou : schéma « Jardin-Package » dans Xcode (⌘U)
 3. **CloudKit** : après les tests en environnement *Development*, déployer le
    schéma vers *Production* — [CloudKit Console](https://icloud.developer.apple.com)
    → conteneur → *Deploy Schema Changes* (⚠️ obligatoire avant la review).
-4. **Icône** : exporter `App/Resources/PlantIcons/appicon.svg` en PNG 1024×1024
-   et l'ajouter à un asset catalog `AppIcon`.
+4. **Icône** : déjà en place (`Assets.xcassets/AppIcon`, PNG 1024 généré par
+   `Scripts/generate_app_icon.py` — script local sans dépendance, relançable
+   pour toute retouche).
 5. **Archive** : Xcode → *Product > Archive* (une archive par plateforme iOS et
    macOS) → *Distribute App > App Store Connect*.
 6. **App Store Connect** : fiche (captures iPhone/iPad/Mac, description,
