@@ -42,9 +42,9 @@ public struct GardenMapSnapshotView: View {
             RoundedRectangle(cornerRadius: 20).fill(Color(hex: "#F1EEDC"))
             ForEach(zones) { zone in
                 ZoneShape(points: zone.points)
-                    .fill(Color(hex: zone.colorHex ?? "#2E8B57").opacity(0.22))
+                    .fill(Theme.zoneColor(zone.kind).opacity(0.22))
                 ZoneShape(points: zone.points)
-                    .stroke(Color(hex: zone.colorHex ?? "#2E8B57").opacity(0.8), lineWidth: 2)
+                    .stroke(Theme.zoneColor(zone.kind).opacity(0.8), lineWidth: 2)
                 if let first = zone.points.first {
                     Text(zone.name ?? "Zone")
                         .font(.system(size: side * 0.018, weight: .semibold))

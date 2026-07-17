@@ -99,7 +99,7 @@ public struct GardenMapView: View {
     private func mapContent(size: CGSize) -> some View {
         ZStack {
             RoundedRectangle(cornerRadius: 14)
-                .fill(Theme.beige.opacity(0.6))
+                .fill(Theme.mapBackground)
             meterGrid(size: size)
 
             ForEach(zones) { zone in
@@ -108,10 +108,10 @@ public struct GardenMapView: View {
 
             if !viewModel.draftZonePoints.isEmpty {
                 ZoneShape(points: viewModel.draftZonePoints)
-                    .stroke(Theme.tomatoRed, style: StrokeStyle(lineWidth: 2, dash: [4, 3]))
+                    .stroke(Theme.danger, style: StrokeStyle(lineWidth: 2, dash: [4, 3]))
                 ForEach(Array(viewModel.draftZonePoints.enumerated()), id: \.offset) { _, point in
                     Circle()
-                        .fill(Theme.tomatoRed)
+                        .fill(Theme.danger)
                         .frame(width: 8, height: 8)
                         .position(x: point.x * size.width, y: point.y * size.height)
                 }
@@ -159,7 +159,7 @@ public struct GardenMapView: View {
                 path.addLine(to: CGPoint(x: canvasSize.width, y: y))
                 y += stepY
             }
-            context.stroke(path, with: .color(Theme.olive.opacity(0.1)), lineWidth: 1)
+            context.stroke(path, with: .color(Theme.secondaryTint.opacity(0.10)), lineWidth: 1)
         }
         .allowsHitTesting(false)
     }
@@ -169,10 +169,10 @@ public struct GardenMapView: View {
     @ViewBuilder
     private func zoneLayer(_ zone: GardenZoneMO, size: CGSize) -> some View {
         let isSelected = zone.id == viewModel.selectedZoneID && viewModel.mode == .secteurs
-        let color = Color(hex: zone.colorHex ?? "#2E8B57")
+        let color = Theme.zoneColor(zone.kind)
 
         ZoneShape(points: zone.points)
-            .fill(color.opacity(isSelected ? 0.32 : 0.22))
+            .fill(color.opacity(isSelected ? 0.34 : 0.22))
         ZoneShape(points: zone.points)
             .stroke(color.opacity(isSelected ? 1 : 0.75),
                     style: StrokeStyle(lineWidth: isSelected ? 2.5 : 1.5, dash: isSelected ? [] : [6, 3]))
@@ -185,7 +185,7 @@ public struct GardenMapView: View {
                 Text(area).font(.system(size: 8))
             }
         }
-        .foregroundStyle(Theme.olive)
+        .foregroundStyle(Theme.secondaryTint)
         .padding(.horizontal, 5)
         .padding(.vertical, 2)
         .background(Theme.cardBackground.opacity(0.7), in: Capsule())
@@ -251,7 +251,7 @@ public struct GardenMapView: View {
                     .font(.system(size: 8, weight: .bold))
                     .foregroundStyle(.white)
                     .frame(width: 15, height: 15)
-                    .background(Theme.olive.opacity(0.8), in: Circle())
+                    .background(Theme.secondaryTint.opacity(0.8), in: Circle())
             }
             .buttonStyle(.plain)
             .position(x: mid.x * size.width, y: mid.y * size.height)
@@ -260,9 +260,9 @@ public struct GardenMapView: View {
         // Sommets déplaçables (menu contextuel pour supprimer).
         ForEach(points.indices, id: \.self) { index in
             Circle()
-                .fill(viewModel.draggingVertexIndex == index ? Theme.tomatoRed : .white)
+                .fill(viewModel.draggingVertexIndex == index ? Theme.danger : Theme.cardBackground)
                 .frame(width: 16, height: 16)
-                .overlay(Circle().stroke(Theme.tomatoRed, lineWidth: 2))
+                .overlay(Circle().stroke(Theme.danger, lineWidth: 2))
                 .position(x: points[index].x * size.width, y: points[index].y * size.height)
                 .gesture(
                     DragGesture(minimumDistance: 1, coordinateSpace: .named("gardenMap"))
@@ -311,7 +311,7 @@ public struct GardenMapView: View {
             PlantIconView(plant: plant, size: diameter * 0.82)
                 .padding(diameter * 0.09)
                 .background(Theme.cardBackground.opacity(0.85), in: Circle())
-                .overlay(Circle().stroke(isDragging ? Theme.tomatoRed : Theme.leaf.opacity(0.5),
+                .overlay(Circle().stroke(isDragging ? Theme.danger : Theme.accent.opacity(0.55),
                                          lineWidth: isDragging ? 2.5 : 1.5))
                 .shadow(color: .black.opacity(isDragging ? 0.25 : 0.08), radius: isDragging ? 8 : 3, y: 2)
             if showLabel {
@@ -371,14 +371,14 @@ public struct GardenMapView: View {
 
         return VStack(alignment: .leading, spacing: 3) {
             Text(meters < 1 ? "\(Int(meters * 100)) cm" : "\(Int(meters)) m")
-                .font(.caption2.weight(.semibold).monospacedDigit())
+                .font(Theme.dataS)
             HStack(spacing: 0) {
                 Rectangle().frame(width: 2, height: 8)
                 Rectangle().frame(width: max(barWidth - 4, 10), height: 3)
                 Rectangle().frame(width: 2, height: 8)
             }
         }
-        .foregroundStyle(Theme.olive)
+        .foregroundStyle(Theme.secondaryTint)
         .padding(8)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
         .padding(10)
@@ -392,7 +392,7 @@ public struct GardenMapView: View {
             Button { viewModel.resetViewport() } label: { Image(systemName: "arrow.counterclockwise") }
         }
         .buttonStyle(.bordered)
-        .tint(Theme.olive)
+        .tint(Theme.secondaryTint)
         .padding()
         .padding(.bottom, 40)
     }
@@ -408,7 +408,7 @@ public struct GardenMapView: View {
                 Button("Terminer", systemImage: "checkmark.circle.fill") { viewModel.finishZoneDrawing() }
                     .disabled(viewModel.draftZonePoints.count < 3)
                     .buttonStyle(.borderedProminent)
-                    .tint(Theme.leaf)
+                    .tint(Theme.accent)
                 Button("Abandonner", role: .destructive) { viewModel.cancelZoneDrawing() }
             }
             .font(.caption)

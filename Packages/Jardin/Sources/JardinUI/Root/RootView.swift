@@ -55,7 +55,7 @@ public struct RootView: View {
         .environmentObject(appEnv.store)
         // Bascule démo/réel : reconstruit la hiérarchie pour rebrancher les @FetchRequest.
         .id(appEnv.demoMode)
-        .tint(Theme.leaf)
+        .tint(Theme.accent)
         .task {
             await appEnv.performDailyRefresh()
         }

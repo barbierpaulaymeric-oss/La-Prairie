@@ -54,7 +54,7 @@ public struct RecognitionView: View {
             VStack(spacing: 16) {
                 Image(systemName: "checkmark.seal.fill")
                     .font(.system(size: 54))
-                    .foregroundStyle(Theme.leaf)
+                    .foregroundStyle(Theme.accent)
                 Text("Plante enregistrée !")
                     .font(.title3.weight(.semibold))
                 Text("La photo enrichit l'apprentissage : la prochaine identification de cette plante sera plus fiable.")
@@ -63,7 +63,7 @@ public struct RecognitionView: View {
                     .multilineTextAlignment(.center)
                 Button("Identifier une autre plante") { viewModel.reset() }
                     .buttonStyle(.borderedProminent)
-                    .tint(Theme.leaf)
+                    .tint(Theme.accent)
                 Button("Fermer") { dismiss() }
             }
             .padding()
@@ -91,7 +91,7 @@ public struct RecognitionView: View {
                     ForEach(analysis.detectedIssues, id: \.self) { issue in
                         Label(issue, systemImage: "exclamationmark.triangle")
                             .font(.caption)
-                            .foregroundStyle(Theme.carrotOrange)
+                            .foregroundStyle(Theme.warning)
                     }
                 }
             }
@@ -116,8 +116,8 @@ public struct RecognitionView: View {
                                         .font(.caption2)
                                         .padding(.horizontal, 6)
                                         .padding(.vertical, 2)
-                                        .background(Theme.beige, in: Capsule())
-                                        .foregroundStyle(Theme.olive)
+                                        .background(Theme.accentContainer, in: Capsule())
+                                        .foregroundStyle(Theme.onAccentContainer)
                                 }
                                 ConfidenceBar(value: candidate.confidence)
                             }
@@ -170,7 +170,7 @@ struct RecognitionPickView: View {
         VStack(spacing: 20) {
             Image(systemName: "camera.viewfinder")
                 .font(.system(size: 60))
-                .foregroundStyle(Theme.leaf)
+                .foregroundStyle(Theme.accent)
             Text("Photographiez une plante")
                 .font(.title3.weight(.semibold))
             Text("L'app l'identifie, détecte les problèmes visibles et remplit sa fiche automatiquement. Chaque validation ou correction améliore la reconnaissance.")
@@ -211,7 +211,7 @@ struct RecognitionConfirmSheet: View {
                         Label("Créer sur la carte", systemImage: "plus.circle.fill")
                     }
                     .buttonStyle(.borderedProminent)
-                    .tint(Theme.leaf)
+                    .tint(Theme.accent)
                 }
 
                 if !plants.isEmpty {
@@ -277,7 +277,7 @@ struct ManualSpeciesPicker: View {
                             Spacer()
                             Text(species.category.label)
                                 .font(.caption2)
-                                .foregroundStyle(Theme.olive)
+                                .foregroundStyle(Theme.secondaryTint)
                         }
                     }
                     .buttonStyle(.plain)

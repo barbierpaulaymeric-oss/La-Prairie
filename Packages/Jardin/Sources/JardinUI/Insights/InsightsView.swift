@@ -27,7 +27,7 @@ public struct InsightsView: View {
                     HStack {
                         Image(systemName: weather.conditionSymbol)
                             .font(.title2)
-                            .foregroundStyle(Theme.olive)
+                            .foregroundStyle(Theme.secondaryTint)
                         VStack(alignment: .leading) {
                             Text("\(Int(weather.temperatureCelsius)) °C · \(weather.conditionDescription)")
                             Text("Pluie : aujourd'hui \(Int(weather.rainProbabilityToday * 100)) %, demain \(Int(weather.rainProbabilityTomorrow * 100)) %")
@@ -39,7 +39,7 @@ public struct InsightsView: View {
                         Label("Pluie prévue demain : les rappels d'arrosage imminents sont décalés d'un jour.",
                               systemImage: "cloud.rain")
                             .font(.caption)
-                            .foregroundStyle(Theme.olive)
+                            .foregroundStyle(Theme.secondaryTint)
                     }
                 }
             }
@@ -57,7 +57,7 @@ public struct InsightsView: View {
                                 insight.acknowledged.toggle()
                                 store.save()
                             }
-                            .tint(Theme.olive)
+                            .tint(Theme.secondaryTint)
                             Button("Supprimer", role: .destructive) {
                                 store.context.delete(insight)
                                 store.save()
@@ -99,8 +99,10 @@ struct InsightRowView: View {
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             Image(systemName: iconName)
+                .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(Theme.severityColor(Int(insight.severityRaw)))
-                .frame(width: 24)
+                .frame(width: 28, height: 28)
+                .background(Theme.severityBg(Int(insight.severityRaw)), in: Circle())
             VStack(alignment: .leading, spacing: 4) {
                 Text(insight.message ?? "")
                     .font(.callout)

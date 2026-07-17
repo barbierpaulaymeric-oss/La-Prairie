@@ -106,11 +106,11 @@ public enum ZoneKind: String, CaseIterable, Codable, Identifiable, Sendable {
     public var defaultColorHex: String {
         switch self {
         case .potager: return "#2E8B57"
-        case .aromatiques: return "#556B2F"
-        case .verger: return "#90EE90"
-        case .serre: return "#DEB887"
-        case .massif: return "#8FBC8F"
-        case .autre: return "#F5F5DC"
+        case .aromatiques: return "#7A8B3A"
+        case .verger: return "#58AE6A"
+        case .serre: return "#B78A50"
+        case .massif: return "#7FA98A"
+        case .autre: return "#A29B7F"
         }
     }
 }

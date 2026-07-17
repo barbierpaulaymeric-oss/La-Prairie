@@ -109,8 +109,8 @@ struct ZoneEditorView: View {
                 }
                 Section {
                     ZoneShape(points: points)
-                        .fill(Color(hex: kind.defaultColorHex).opacity(0.3))
-                        .overlay(ZoneShape(points: points).stroke(Color(hex: kind.defaultColorHex), lineWidth: 2))
+                        .fill(Theme.zoneColor(kind).opacity(0.3))
+                        .overlay(ZoneShape(points: points).stroke(Theme.zoneColor(kind), lineWidth: 2))
                         .frame(height: 140)
                         .accessibilityLabel("Aperçu de la zone, \(points.count) sommets")
                 } header: {

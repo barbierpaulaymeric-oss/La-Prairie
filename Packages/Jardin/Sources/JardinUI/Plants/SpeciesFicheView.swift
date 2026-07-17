@@ -19,8 +19,10 @@ struct SpeciesFicheView: View {
                                value: "\(species.waterNeed.label) · \(species.sunNeed.label)")
                 LabeledContent("Sol conseillé", value: species.soil ?? "—")
 
-                monthsRow(title: "Semis / plantation", months: species.sowingMonths)
-                monthsRow(title: "Récolte", months: species.harvestMonths)
+                monthsRow(title: "Semis / plantation", months: species.sowingMonths,
+                          activeColor: Theme.accent)
+                monthsRow(title: "Récolte", months: species.harvestMonths,
+                          activeColor: Theme.harvestDot)
 
                 LabeledContent("Durée de vie",
                                value: species.lifespanYears < 2
@@ -63,7 +65,7 @@ struct SpeciesFicheView: View {
                     Text("Fiche « \(species.commonName ?? "") »")
                     if species.isUserModified {
                         Image(systemName: "pencil.circle.fill")
-                            .foregroundStyle(Theme.carrotOrange)
+                            .foregroundStyle(Theme.warning)
                             .help("Fiche personnalisée par vous")
                     }
                     Spacer()
@@ -71,7 +73,8 @@ struct SpeciesFicheView: View {
                         if isEditing { store.markSpeciesModified(species) }
                         isEditing.toggle()
                     }
-                    .font(.caption)
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(Theme.accent)
                 }
             } footer: {
                 Text("Modifier la fiche s'applique à toutes les plantes de cette espèce. Les besoins en eau, lumière et sol se personnalisent par plante dans « Entretien ».")
@@ -79,17 +82,17 @@ struct SpeciesFicheView: View {
         }
     }
 
-    private func monthsRow(title: String, months: [Int]) -> some View {
+    private func monthsRow(title: String, months: [Int], activeColor: Color) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title).font(.caption).foregroundStyle(.secondary)
             HStack(spacing: 3) {
                 ForEach(1...12, id: \.self) { month in
                     Text(Months.label(for: month).prefix(1))
-                        .font(.system(size: 9, weight: .semibold))
-                        .frame(width: 18, height: 18)
-                        .background(months.contains(month) ? Theme.leaf : Theme.leaf.opacity(0.1),
-                                    in: RoundedRectangle(cornerRadius: 4))
-                        .foregroundStyle(months.contains(month) ? .white : Theme.olive.opacity(0.6))
+                        .font(.caption2.weight(.semibold))
+                        .frame(width: 22, height: 22)
+                        .background(months.contains(month) ? activeColor : Theme.subtleBackground,
+                                    in: Circle())
+                        .foregroundStyle(months.contains(month) ? .white : Theme.textTertiary)
                         .accessibilityLabel(months.contains(month) ? "\(Months.label(for: month)) : oui" : "")
                 }
             }
@@ -100,7 +103,7 @@ struct SpeciesFicheView: View {
         VStack(alignment: .leading, spacing: 3) {
             Label(title, systemImage: icon)
                 .font(.caption.weight(.medium))
-                .foregroundStyle(Theme.olive)
+                .foregroundStyle(Theme.secondaryTint)
             Text(text).font(.caption)
         }
         .padding(.vertical, 2)
@@ -108,7 +111,7 @@ struct SpeciesFicheView: View {
 
     private func fieldEditor(title: String, keyPath: ReferenceWritableKeyPath<PlantSpeciesMO, String?>) -> some View {
         VStack(alignment: .leading, spacing: 3) {
-            Text(title).font(.caption.weight(.medium)).foregroundStyle(Theme.olive)
+            Text(title).font(.caption.weight(.medium)).foregroundStyle(Theme.secondaryTint)
             TextField(title, text: Binding(
                 get: { species?[keyPath: keyPath] ?? "" },
                 set: { species?[keyPath: keyPath] = $0 }

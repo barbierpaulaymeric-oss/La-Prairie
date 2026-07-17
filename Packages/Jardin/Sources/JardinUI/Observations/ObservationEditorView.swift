@@ -44,7 +44,7 @@ struct ObservationEditorView: View {
                         ForEach(analysis.detectedIssues, id: \.self) { issue in
                             Label(issue, systemImage: "exclamationmark.triangle")
                                 .font(.caption)
-                                .foregroundStyle(Theme.carrotOrange)
+                                .foregroundStyle(Theme.warning)
                         }
                         if let growth = growthPreview {
                             Label(growth, systemImage: "chart.line.uptrend.xyaxis")
