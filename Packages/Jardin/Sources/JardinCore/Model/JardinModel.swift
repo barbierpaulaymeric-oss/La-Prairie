@@ -3,6 +3,11 @@ import CoreData
 /// Modèle Core Data défini par code : versionnable en revue, sans bundle `.xcdatamodeld`.
 /// Contraintes CloudKit respectées : tous les attributs sont optionnels ou ont une valeur
 /// par défaut, toutes les relations ont un inverse, aucune contrainte d'unicité.
+///
+/// Ordre de construction important : `NSEntityDescription.properties` peut copier les
+/// descriptions à l'assignation — les inverses sont donc câblés **après** installation,
+/// sur les instances effectivement installées (`relationshipsByName`), sinon la
+/// propagation des suppressions laisse des références pendantes (crash).
 public enum JardinModel {
     public static let shared: NSManagedObjectModel = build()
 
@@ -33,6 +38,10 @@ public enum JardinModel {
             attr("customSpreadM", .doubleAttributeType, default: 0.0),
             attr("createdAt", .dateAttributeType),
             attr("updatedAt", .dateAttributeType),
+            rel("species", to: species, toMany: false, deleteRule: .nullifyDeleteRule),
+            rel("zone", to: zone, toMany: false, deleteRule: .nullifyDeleteRule),
+            rel("observations", to: observation, toMany: true, deleteRule: .cascadeDeleteRule),
+            rel("harvests", to: harvest, toMany: true, deleteRule: .cascadeDeleteRule),
         ]
 
         species.properties = [
@@ -55,6 +64,7 @@ public enum JardinModel {
             attr("infoNotes", .stringAttributeType),
             attr("isBuiltIn", .booleanAttributeType, default: true),
             attr("isUserModified", .booleanAttributeType, default: false),
+            rel("plants", to: plant, toMany: true, deleteRule: .nullifyDeleteRule),
         ]
 
         observation.properties = [
@@ -70,6 +80,7 @@ public enum JardinModel {
             attr("mlConfidence", .doubleAttributeType, default: 0.0),
             attr("correctedLabel", .stringAttributeType),
             attr("foregroundAreaRatio", .doubleAttributeType, default: 0.0),
+            rel("plant", to: plant, toMany: false, deleteRule: .nullifyDeleteRule),
         ]
 
         harvest.properties = [
@@ -81,6 +92,7 @@ public enum JardinModel {
             attr("notes", .stringAttributeType),
             attr("photoData", .binaryDataAttributeType, external: true),
             attr("thumbnailData", .binaryDataAttributeType),
+            rel("plant", to: plant, toMany: false, deleteRule: .nullifyDeleteRule),
         ]
 
         zone.properties = [
@@ -92,6 +104,7 @@ public enum JardinModel {
             attr("soilType", .stringAttributeType),
             attr("sunExposureRaw", .stringAttributeType),
             attr("notes", .stringAttributeType),
+            rel("plants", to: plant, toMany: true, deleteRule: .nullifyDeleteRule),
         ]
 
         example.properties = [
@@ -117,10 +130,11 @@ public enum JardinModel {
             attr("acknowledged", .booleanAttributeType, default: false),
         ]
 
-        relate(one: plant, "species", toMany: species, "plants", deleteRule: .nullifyDeleteRule)
-        relate(one: plant, "zone", toMany: zone, "plants", deleteRule: .nullifyDeleteRule)
-        relate(one: observation, "plant", toMany: plant, "observations", deleteRule: .nullifyDeleteRule, inverseDeleteRule: .cascadeDeleteRule)
-        relate(one: harvest, "plant", toMany: plant, "harvests", deleteRule: .nullifyDeleteRule, inverseDeleteRule: .cascadeDeleteRule)
+        // Inverses : câblés sur les descriptions installées dans les entités.
+        wireInverse(plant, "species", species, "plants")
+        wireInverse(plant, "zone", zone, "plants")
+        wireInverse(plant, "observations", observation, "plant")
+        wireInverse(plant, "harvests", harvest, "plant")
 
         let model = NSManagedObjectModel()
         model.entities = [plant, species, observation, harvest, zone, example, insight]
@@ -147,33 +161,27 @@ public enum JardinModel {
         return attribute
     }
 
-    /// Crée une paire de relations inverses : `one.<toOneName>` (vers `many`) et `many.<toManyName>` (vers `one`).
-    private static func relate(one: NSEntityDescription,
-                               _ toOneName: String,
-                               toMany many: NSEntityDescription,
-                               _ toManyName: String,
-                               deleteRule: NSDeleteRule,
-                               inverseDeleteRule: NSDeleteRule = .nullifyDeleteRule) {
-        let toOne = NSRelationshipDescription()
-        toOne.name = toOneName
-        toOne.destinationEntity = many
-        toOne.minCount = 0
-        toOne.maxCount = 1
-        toOne.isOptional = true
-        toOne.deleteRule = deleteRule
+    private static func rel(_ name: String,
+                            to destination: NSEntityDescription,
+                            toMany: Bool,
+                            deleteRule: NSDeleteRule) -> NSRelationshipDescription {
+        let relationship = NSRelationshipDescription()
+        relationship.name = name
+        relationship.destinationEntity = destination
+        relationship.minCount = 0
+        relationship.maxCount = toMany ? 0 : 1
+        relationship.isOptional = true
+        relationship.deleteRule = deleteRule
+        return relationship
+    }
 
-        let toManyRel = NSRelationshipDescription()
-        toManyRel.name = toManyName
-        toManyRel.destinationEntity = one
-        toManyRel.minCount = 0
-        toManyRel.maxCount = 0
-        toManyRel.isOptional = true
-        toManyRel.deleteRule = inverseDeleteRule
-
-        toOne.inverseRelationship = toManyRel
-        toManyRel.inverseRelationship = toOne
-
-        one.properties.append(toOne)
-        many.properties.append(toManyRel)
+    private static func wireInverse(_ entityA: NSEntityDescription, _ nameA: String,
+                                    _ entityB: NSEntityDescription, _ nameB: String) {
+        guard let relA = entityA.relationshipsByName[nameA],
+              let relB = entityB.relationshipsByName[nameB] else {
+            preconditionFailure("Relation \(nameA)/\(nameB) absente du modèle")
+        }
+        relA.inverseRelationship = relB
+        relB.inverseRelationship = relA
     }
 }
