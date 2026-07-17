@@ -53,6 +53,9 @@ targets:
           Votre position (optionnelle) sert uniquement à obtenir la météo
           locale pour ajuster les rappels d'arrosage.
         JIICloudContainerIdentifier: iCloud.com.laprairie.jardinintelligent
+        # Verrou CloudKit : cette variante embarque les entitlements iCloud,
+        # la synchronisation peut donc être autorisée.
+        JIEnableCloudSync: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.laprairie.jardinintelligent

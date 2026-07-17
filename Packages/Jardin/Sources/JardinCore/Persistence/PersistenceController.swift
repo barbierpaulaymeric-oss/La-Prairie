@@ -28,11 +28,20 @@ public final class PersistenceController: ObservableObject {
             ?? "iCloud.com.laprairie.jardinintelligent"
     }
 
-    /// Vrai si l'app dispose d'une configuration iCloud active (entitlement présent
-    /// **et** compte connecté). Indispensable : sans entitlement, CloudKit lève une
-    /// NSException fatale sur un thread d'arrière-plan — incatchable en Swift — dès
-    /// que `NSPersistentCloudKitContainer` initialise son `CKContainer`. On ne
-    /// configure donc la synchronisation que si ce jeton existe.
+    /// Drapeau de build (Info.plist) autorisant l'usage de CloudKit.
+    ///
+    /// Sans la capacité iCloud, CloudKit lève une NSException fatale sur un thread
+    /// d'arrière-plan — incatchable en Swift — dès que `NSPersistentCloudKitContainer`
+    /// initialise son `CKContainer` ; aucune détection d'entitlement à l'exécution
+    /// n'est fiable sur toutes les plateformes. Le projet committé (sans signing ni
+    /// capacités) livre donc `JIEnableCloudSync = NO` ; passez-le à YES uniquement
+    /// dans un build doté de l'entitlement iCloud (fait par la variante project.yml).
+    public static var cloudSyncEnabledInBuild: Bool {
+        (Bundle.main.object(forInfoDictionaryKey: "JIEnableCloudSync") as? Bool) ?? false
+    }
+
+    /// Vrai si un compte iCloud est connecté (jeton d'identité présent) —
+    /// second garde-fou : sans compte, inutile de tenter la synchronisation.
     public static var iCloudAccountAvailable: Bool {
         FileManager.default.ubiquityIdentityToken != nil
     }
@@ -48,7 +57,7 @@ public final class PersistenceController: ObservableObject {
             description.url = storeURL
             description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
             description.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
-            if cloudKitEnabled, Self.iCloudAccountAvailable {
+            if cloudKitEnabled, Self.cloudSyncEnabledInBuild, Self.iCloudAccountAvailable {
                 description.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(
                     containerIdentifier: Self.cloudContainerIdentifier
                 )

@@ -24,6 +24,8 @@
 	<false/>
 	<key>JIICloudContainerIdentifier</key>
 	<string>iCloud.com.laprairie.jardinintelligent</string>
+	<key>JIEnableCloudSync</key>
+	<false/>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

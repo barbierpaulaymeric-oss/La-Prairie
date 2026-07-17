@@ -95,13 +95,16 @@ développeur) :
    **Team**, puis ajouter les capacités *iCloud (CloudKit)*, *Push
    Notifications* et *WeatherKit* — ou pointer `CODE_SIGN_ENTITLEMENTS` vers
    `App/Support/JardinIntelligent-iOS.entitlements` fourni.
-2. Laisser Xcode créer le conteneur `iCloud.com.laprairie.jardinintelligent`
+2. Dans `App/Support/Info.plist`, passer **`JIEnableCloudSync` à `YES`** :
+   c'est ce verrou (à `NO` dans le projet committé) qui autorise l'app à
+   toucher CloudKit — sans lui, un build dépourvu d'entitlement iCloud
+   planterait au démarrage (exception CloudKit incatchable).
+3. Laisser Xcode créer le conteneur `iCloud.com.laprairie.jardinintelligent`
    (ou changer l'identifiant dans l'Info.plist, clé
    `JIICloudContainerIdentifier`, et dans les entitlements).
-3. Lancer l'app avec un **compte iCloud connecté** (Réglages de l'appareil ou
-   du simulateur). Sans compte ou sans entitlement, l'app détecte l'absence de
-   configuration iCloud (`ubiquityIdentityToken`) et reste sereinement en
-   stockage local — l'état est visible dans *Réglages → iCloud*.
+4. Lancer l'app avec un **compte iCloud connecté** (Réglages de l'appareil ou
+   du simulateur) — sans compte, l'app reste sereinement en stockage local,
+   l'état est visible dans *Réglages → iCloud*.
 
 <details>
 <summary>Variante macOS / multiplateforme via XcodeGen (optionnelle)</summary>
