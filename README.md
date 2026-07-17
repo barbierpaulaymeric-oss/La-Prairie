@@ -29,8 +29,8 @@ Swift Charts, WeatherKit, UserNotifications). **Aucune dépendance externe.**
 
 | Domaine | Détail |
 |---|---|
-| **Carte du jardin** | zones à main levée ou prédéfinies, drag & drop des plantes, zoom/panoramique, affectation automatique zone↔plante, export PDF |
-| **Fiches plantes** | 22 espèces pré-remplies (eau, lumière, sol, bouturage, conservation, compagnonnage, calendriers semis/récolte, rendement moyen) — chaque champ personnalisable, par plante ou par espèce |
+| **Carte du jardin** | échelle réelle (dimensions du terrain en mètres, grille métrique, barre d'échelle), plantes dessinées à leur **emprise au sol** (modifiable par plante), secteurs dessinés puis **éditables** (sommets déplaçables, ajout/suppression de points, déplacement, surface en m²), drag & drop, zoom, export PDF |
+| **Fiches plantes** | **74 espèces** pré-remplies (eau, lumière, sol, bouturage, conservation, compagnonnage, calendriers semis/récolte, rendement moyen, emprise au sol) — chaque champ personnalisable, par plante ou par espèce |
 | **Reconnaissance** | photo → candidats avec % de confiance, 4 sources en cascade (kNN personnel → Core ML embarqué → taxonomie Vision → API en ligne optionnelle), validation/correction qui améliore le système |
 | **Analyse photo** | santé du feuillage (jaunissement, taches — avec causes probables), suivi de croissance entre photos (surface visible), stade estimé |
 | **Récoltes** | saisie (quantité, qualité, conservation, photo), Swift Charts par mois/plante/zone, comparaison à la moyenne de l'espèce et entre zones |
@@ -142,11 +142,12 @@ votre jardin.
 1. Ouvrir `Packages/Jardin/Sources/JardinCore/Seed/SpeciesCatalog.swift`.
 2. Ajouter un `SpeciesSeed(...)` (tous les champs sont documentés par l'exemple :
    besoins, sol, bouturage, conservation, mois — 1 à 12 —, compagnons…).
-3. Le seed n'insère que si la base d'espèces est vide : sur un appareil déjà
-   installé, la nouvelle fiche apparaît après réinstallation *ou* en
-   l'ajoutant via l'app. Les tests `SeedCatalogTests` valident la complétude.
-4. Option : ajouter l'icône dédiée (voir [Icônes](#icônes-de-plantes)) et le
-   mot-clé correspondant dans `PlantIconKind.detect`.
+3. Incrémenter `SeedService.catalogVersion` : les installations existantes
+   reçoivent alors les nouvelles fiches au lancement suivant (fusion par nom,
+   sans jamais toucher aux fiches personnalisées ni créées par l'utilisateur).
+   Les tests `SeedCatalogTests` valident la complétude.
+4. Option : ajouter le mot-clé et le style dédiés dans
+   `IconCatalog.descriptor` (voir [Icônes](#icônes-de-plantes)).
 
 ## Reconnaissance : entraîner et améliorer le modèle
 
@@ -193,8 +194,11 @@ Deux mécanismes complémentaires, même langage visuel (minimaliste, palette
 `#2E8B57 #556B2F #90EE90 #F5F5DC #DEB887`) :
 
 1. **In-app, à la volée** : `PlantIconView` dessine paramétriquement (Canvas)
-   24 silhouettes (tomate, basilic, romarin, carotte…) choisies par mot-clé du
-   nom d'espèce — toute nouvelle plante a une icône sans asset.
+   ~30 familles de silhouettes déclinées par couleurs et formes
+   (`IconCatalog.descriptor`) : **chaque espèce du catalogue a sa propre
+   icône** (pommier ≠ cerisier ≠ citronnier…), et toute nouvelle plante en
+   reçoit une sans asset. Sur la carte, l'icône occupe l'emprise au sol réelle
+   de la plante.
 2. **Assets statiques** : `Scripts/generate_plant_icons.py` génère les SVG
    512×512 committés dans `App/Resources/PlantIcons/` (+ `appicon.svg`).
    Génération locale, déterministe, sans API :

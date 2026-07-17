@@ -4,7 +4,8 @@ import XCTest
 
 final class SeedCatalogTests: XCTestCase {
     func testCatalogEntriesAreComplete() {
-        XCTAssertGreaterThanOrEqual(SpeciesCatalog.all.count, 20)
+        XCTAssertGreaterThanOrEqual(SpeciesCatalog.all.count, 60,
+                                    "Le catalogue livré doit couvrir large")
         for seed in SpeciesCatalog.all {
             XCTAssertFalse(seed.commonName.isEmpty)
             XCTAssertFalse(seed.scientificName.isEmpty)
@@ -15,7 +16,30 @@ final class SeedCatalogTests: XCTestCase {
             XCTAssertTrue(seed.harvestMonths.allSatisfy { (1...12).contains($0) })
             XCTAssertTrue(seed.sowingMonths.allSatisfy { (1...12).contains($0) })
             XCTAssertGreaterThan(seed.lifespanYears, 0)
+            XCTAssertGreaterThan(seed.spreadM, 0, "\(seed.commonName) : emprise au sol manquante")
         }
+    }
+
+    func testCatalogUpdateAddsMissingSpeciesWithoutTouchingUserData() throws {
+        let controller = PersistenceController(inMemory: true)
+        let context = controller.container.viewContext
+        let defaults = UserDefaults(suiteName: "seed-tests-\(UUID().uuidString)")!
+
+        // Base « ancienne » : deux espèces livrées sans emprise, dont une personnalisée.
+        let untouched = SeedService.insert(SpeciesCatalog.all[0], in: context)
+        untouched.spreadM = 0
+        let customized = SeedService.insert(SpeciesCatalog.all[1], in: context)
+        customized.spreadM = 0
+        customized.isUserModified = true
+        try context.save()
+
+        let inserted = SeedService.updateBuiltInCatalog(in: context, defaults: defaults)
+        XCTAssertEqual(inserted, SpeciesCatalog.all.count - 2)
+        XCTAssertGreaterThan(untouched.spreadM, 0, "Fiche livrée non modifiée : emprise complétée")
+        XCTAssertEqual(customized.spreadM, 0, "Fiche personnalisée : jamais touchée")
+
+        XCTAssertEqual(SeedService.updateBuiltInCatalog(in: context, defaults: defaults), 0,
+                       "Une fois la version enregistrée, plus aucune écriture")
     }
 
     func testCatalogNamesAreUnique() {

@@ -30,6 +30,7 @@ public enum JardinModel {
             attr("customWaterNeedRaw", .stringAttributeType),
             attr("customSunNeedRaw", .stringAttributeType),
             attr("customSoil", .stringAttributeType),
+            attr("customSpreadM", .doubleAttributeType, default: 0.0),
             attr("createdAt", .dateAttributeType),
             attr("updatedAt", .dateAttributeType),
         ]
@@ -47,6 +48,7 @@ public enum JardinModel {
             attr("sowingMonthsRaw", .stringAttributeType),
             attr("harvestMonthsRaw", .stringAttributeType),
             attr("lifespanYears", .doubleAttributeType, default: 1.0),
+            attr("spreadM", .doubleAttributeType, default: 0.0),
             attr("companionsRaw", .stringAttributeType),
             attr("antagonistsRaw", .stringAttributeType),
             attr("averageYieldKg", .doubleAttributeType, default: 0.0),

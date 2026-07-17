@@ -49,10 +49,9 @@ public struct PlantEditorView: View {
 
                 Section {
                     HStack {
-                        PlantIconView(kind: PlantIconKind.detect(
-                            name: selectedSpecies?.commonName ?? name,
-                            category: selectedSpecies?.category ?? category
-                        ), size: 52)
+                        PlantIconView(name: selectedSpecies?.commonName ?? name,
+                                      category: selectedSpecies?.category ?? category,
+                                      size: 52)
                         Text("Icône générée automatiquement")
                             .font(.caption)
                             .foregroundStyle(.secondary)

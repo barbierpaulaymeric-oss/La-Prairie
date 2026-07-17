@@ -133,6 +133,27 @@ public struct PlantDetailView: View {
             ))
             .onSubmit { store.save() }
 
+            VStack(alignment: .leading, spacing: 4) {
+                LabeledContent("Emprise au sol (carte)") {
+                    Text(Formatters.meters(plant.effectiveSpreadM)
+                         + (plant.customSpreadM > 0 ? "" : " (auto)"))
+                        .foregroundStyle(.secondary)
+                }
+                Slider(value: Binding(
+                    get: { plant.customSpreadM > 0 ? plant.customSpreadM : plant.effectiveSpreadM },
+                    set: { plant.customSpreadM = $0 }
+                ), in: 0.05...8) { _ in
+                    store.save()
+                }
+                if plant.customSpreadM > 0 {
+                    Button("Revenir à la taille de la fiche") {
+                        plant.customSpreadM = 0
+                        store.save()
+                    }
+                    .font(.caption)
+                }
+            }
+
             Toggle("Notifications pour cette plante", isOn: Binding(
                 get: { plant.notificationsEnabled },
                 set: { plant.notificationsEnabled = $0
