@@ -68,7 +68,7 @@ public struct SettingsView: View {
             LabeledContent("Synchronisation") {
                 Label(store.persistence.cloudSyncActive ? "Active" : "Locale uniquement",
                       systemImage: store.persistence.cloudSyncActive ? "icloud.fill" : "icloud.slash")
-                    .foregroundStyle(store.persistence.cloudSyncActive ? Theme.leaf : .secondary)
+                    .foregroundStyle(store.persistence.cloudSyncActive ? Theme.success : Theme.textTertiary)
             }
             if !store.persistence.cloudSyncActive {
                 Text(PersistenceController.cloudSyncEnabledInBuild

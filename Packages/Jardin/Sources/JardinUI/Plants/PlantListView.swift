@@ -95,7 +95,9 @@ struct PlantRowView: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            PlantIconView(plant: plant, size: 40)
+            PlantIconView(plant: plant, size: 30)
+                .frame(width: Theme.Metrics.cellIcon, height: Theme.Metrics.cellIcon)
+                .background(Theme.subtleBackground, in: Circle())
             VStack(alignment: .leading, spacing: 3) {
                 Text(plant.displayName)
                     .font(.headline)
@@ -110,15 +112,15 @@ struct PlantRowView: View {
                         Text("· \(age)")
                     }
                 }
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .font(.footnote)
+                .foregroundStyle(Theme.textSecondary)
             }
             Spacer()
             if let lastObservation = plant.lastObservation, lastObservation.hasHealthScore {
                 HealthBadge(score: lastObservation.healthScore)
             }
             Image(systemName: "drop.fill")
-                .foregroundStyle(Theme.leaf.opacity(0.7))
+                .foregroundStyle(Theme.accent.opacity(0.7))
                 .imageScale(.small)
                 .overlay(alignment: .bottom) {
                     Text("\(plant.wateringIntervalDays)j")

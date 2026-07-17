@@ -55,8 +55,11 @@ public struct HarvestDashboardView: View {
             let total = harvests
                 .filter { Calendar.current.component(.year, from: $0.date) == selectedYear }
                 .reduce(0) { $0 + $1.quantityKg }
-            LabeledContent("Total \(String(selectedYear))", value: Formatters.kg(total))
-                .font(.headline)
+            LabeledContent("Total \(String(selectedYear))") {
+                Text(Formatters.kg(total))
+                    .font(Theme.dataXL)
+                    .foregroundStyle(Theme.accent)
+            }
         }
     }
 
@@ -73,6 +76,7 @@ public struct HarvestDashboardView: View {
                     )
                     .foregroundStyle(by: .value("Plante", point.label))
                 }
+                .chartForegroundStyleScale(range: Theme.dataSeries)
                 .chartXAxis {
                     AxisMarks(values: .stride(by: .month)) { _ in
                         AxisGridLine()
@@ -93,9 +97,9 @@ public struct HarvestDashboardView: View {
                     x: .value("kg", total.totalKg),
                     y: .value("Plante", total.label)
                 )
-                .foregroundStyle(Theme.leaf)
+                .foregroundStyle(Theme.dataSeries[0])
                 .annotation(position: .trailing) {
-                    Text(Formatters.kg(total.totalKg)).font(.caption2).foregroundStyle(.secondary)
+                    Text(Formatters.kg(total.totalKg)).font(Theme.dataS).foregroundStyle(Theme.textSecondary)
                 }
             }
             .frame(height: CGFloat(min(totals.count, 8)) * 34 + 20)
@@ -122,7 +126,7 @@ public struct HarvestDashboardView: View {
                     Label("\(disparity.speciesName) : \(Int(disparity.relativeGap * 100)) % de moins en « \(disparity.worstZone) » qu'en « \(disparity.bestZone) »",
                           systemImage: "exclamationmark.triangle")
                         .font(.caption)
-                        .foregroundStyle(Theme.carrotOrange)
+                        .foregroundStyle(Theme.warning)
                 }
             }
         }
@@ -140,9 +144,9 @@ public struct HarvestDashboardView: View {
                     }
                     Spacer()
                     if let method = harvest.conservationMethod {
-                        Text(method).font(.caption2).foregroundStyle(Theme.olive)
+                        Text(method).font(.caption2).foregroundStyle(Theme.secondaryTint)
                     }
-                    Text(Formatters.kg(harvest.quantityKg)).font(.callout)
+                    Text(Formatters.kg(harvest.quantityKg)).font(Theme.dataFont)
                 }
             }
         }

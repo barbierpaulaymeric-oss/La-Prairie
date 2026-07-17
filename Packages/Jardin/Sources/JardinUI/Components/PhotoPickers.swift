@@ -35,7 +35,7 @@ public struct PhotoCaptureButton: View {
             #endif
         }
         .buttonStyle(.bordered)
-        .tint(Theme.leaf)
+        .tint(Theme.accent)
         .onChange(of: pickerItem) { _, item in
             guard let item else { return }
             Task {

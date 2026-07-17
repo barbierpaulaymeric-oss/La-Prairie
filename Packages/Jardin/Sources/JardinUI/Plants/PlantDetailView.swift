@@ -73,7 +73,7 @@ public struct PlantDetailView: View {
                         if let age = plant.ageDescription { Label(age, systemImage: "calendar") }
                     }
                     .font(.caption)
-                    .foregroundStyle(Theme.olive)
+                    .foregroundStyle(Theme.secondaryTint)
                 }
             }
 
@@ -171,7 +171,7 @@ public struct PlantDetailView: View {
                     Chart(Array(scored), id: \.objectID) { observation in
                         LineMark(x: .value("Date", observation.date ?? Date()),
                                  y: .value("Santé", observation.healthScore * 100))
-                            .foregroundStyle(Theme.leaf)
+                            .foregroundStyle(Theme.accent)
                         PointMark(x: .value("Date", observation.date ?? Date()),
                                   y: .value("Santé", observation.healthScore * 100))
                             .foregroundStyle(Theme.healthColor(observation.healthScore))
@@ -231,7 +231,11 @@ public struct PlantDetailView: View {
     private var harvestsSection: some View {
         Section {
             let year = Calendar.current.component(.year, from: Date())
-            LabeledContent("Total \(String(year))", value: Formatters.kg(plant.totalYieldKg(year: year)))
+            LabeledContent("Total \(String(year))") {
+                Text(Formatters.kg(plant.totalYieldKg(year: year)))
+                    .font(Theme.dataFont)
+                    .foregroundStyle(Theme.accent)
+            }
             if let average = plant.species?.averageYieldKg, average > 0 {
                 LabeledContent("Moyenne de l'espèce", value: "\(Formatters.kg(average))/an")
                     .font(.caption)
@@ -251,10 +255,10 @@ public struct PlantDetailView: View {
                                 Image(systemName: "star.fill").imageScale(.small)
                             }
                         }
-                        .foregroundStyle(Theme.carrotOrange)
+                        .foregroundStyle(Theme.warning)
                     }
                     Text(Formatters.kg(harvest.quantityKg))
-                        .font(.callout.weight(.medium))
+                        .font(Theme.dataFont)
                 }
             }
             .onDelete { indexSet in
@@ -315,7 +319,7 @@ struct ObservationRowView: View {
                 ForEach(observation.detectedIssues, id: \.self) { issue in
                     Label(issue, systemImage: "exclamationmark.triangle")
                         .font(.caption2)
-                        .foregroundStyle(Theme.carrotOrange)
+                        .foregroundStyle(Theme.warning)
                 }
             }
         }

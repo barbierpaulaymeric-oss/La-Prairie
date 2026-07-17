@@ -12,11 +12,11 @@ public struct TagChipsView: View {
         FlowLayout(spacing: 6) {
             ForEach(tags, id: \.self) { tag in
                 Text("#\(tag)")
-                    .font(.caption)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
-                    .background(Theme.olive.opacity(0.14), in: Capsule())
-                    .foregroundStyle(Theme.olive)
+                    .font(.caption.weight(.medium))
+                    .padding(.horizontal, 9)
+                    .padding(.vertical, 4)
+                    .background(Theme.accentContainer, in: Capsule())
+                    .foregroundStyle(Theme.onAccentContainer)
             }
         }
     }
@@ -41,11 +41,11 @@ public struct TagPickerView: View {
                         if isOn { selection.removeAll { $0 == tag } } else { selection.append(tag) }
                     } label: {
                         Text("#\(tag)")
-                            .font(.caption)
+                            .font(.caption.weight(.medium))
                             .padding(.horizontal, 9)
                             .padding(.vertical, 4)
-                            .background(isOn ? Theme.leaf : Theme.leaf.opacity(0.12), in: Capsule())
-                            .foregroundStyle(isOn ? .white : Theme.leaf)
+                            .background(isOn ? Theme.accent : Theme.accentContainer, in: Capsule())
+                            .foregroundStyle(isOn ? .white : Theme.onAccentContainer)
                     }
                     .buttonStyle(.plain)
                 }
@@ -120,16 +120,16 @@ public struct ConfidenceBar: View {
         HStack(spacing: 8) {
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    Capsule().fill(Theme.leaf.opacity(0.15))
+                    Capsule().fill(Theme.accent.opacity(0.15))
                     Capsule()
-                        .fill(value >= 0.6 ? Theme.leaf : (value >= 0.35 ? Theme.carrotOrange : Theme.tomatoRed))
+                        .fill(Theme.confidenceColor(value))
                         .frame(width: geo.size.width * value)
                 }
             }
             .frame(height: 7)
             Text("\(Int(value * 100)) %")
-                .font(.caption.monospacedDigit())
-                .foregroundStyle(.secondary)
+                .font(Theme.dataS)
+                .foregroundStyle(Theme.textSecondary)
                 .frame(width: 42, alignment: .trailing)
         }
     }
@@ -145,7 +145,7 @@ public struct HealthBadge: View {
     public var body: some View {
         Label(score < 0 ? "—" : "\(Int(score * 100)) %",
               systemImage: score < 0 ? "questionmark.circle" : (score >= 0.75 ? "leaf.fill" : "exclamationmark.triangle.fill"))
-            .font(.caption.weight(.medium))
+            .font(Theme.dataS)
             .padding(.horizontal, 8)
             .padding(.vertical, 3)
             .background(Theme.healthColor(score).opacity(0.15), in: Capsule())
@@ -192,8 +192,8 @@ public struct StoredPhotoView: View {
                 .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
         } else {
             RoundedRectangle(cornerRadius: cornerRadius)
-                .fill(Theme.beige)
-                .overlay(Image(systemName: "leaf").foregroundStyle(Theme.olive.opacity(0.5)))
+                .fill(Theme.subtleBackground)
+                .overlay(Image(systemName: "leaf").foregroundStyle(Theme.secondaryTint.opacity(0.5)))
         }
     }
 
@@ -208,7 +208,38 @@ public struct StoredPhotoView: View {
 
 public extension View {
     func cardStyle() -> some View {
-        padding(12)
-            .background(Theme.cardBackground, in: RoundedRectangle(cornerRadius: 12))
+        padding(Theme.Metrics.cardPadding)
+            .background(Theme.cardBackground, in: RoundedRectangle(cornerRadius: Theme.Metrics.cardRadius))
+            .shadow(color: .black.opacity(0.10), radius: 3, y: 1)
+    }
+}
+
+/// En-tête de section du design system : capitales, chasse élargie, action à droite.
+public struct SectionHeaderView: View {
+    let title: String
+    var actionTitle: String?
+    var action: (() -> Void)?
+
+    public init(_ title: String, actionTitle: String? = nil, action: (() -> Void)? = nil) {
+        self.title = title
+        self.actionTitle = actionTitle
+        self.action = action
+    }
+
+    public var body: some View {
+        HStack {
+            Text(title.uppercased())
+                .font(.footnote.weight(.semibold))
+                .tracking(0.6)
+                .foregroundStyle(Theme.textTertiary)
+            Spacer()
+            if let actionTitle, let action {
+                Button(action: action) {
+                    Text(actionTitle)
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(Theme.accent)
+                }
+            }
+        }
     }
 }
