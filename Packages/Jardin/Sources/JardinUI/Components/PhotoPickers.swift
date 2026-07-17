@@ -61,9 +61,11 @@ public struct PhotoCaptureButton: View {
     }
 
     private func process(platformImage: PlatformImage) async {
+        // Le CGImage (immuable, Sendable) est extrait avant de quitter l'acteur :
+        // UIImage/NSImage ne doivent pas traverser un Task.detached.
+        guard let cg = ImageUtils.cgImage(from: platformImage) else { return }
         let captured: Captured? = await Task.detached(priority: .userInitiated) {
-            guard let cg = ImageUtils.cgImage(from: platformImage),
-                  let stored = ImageUtils.makeStoredPhoto(fromCGImage: cg),
+            guard let stored = ImageUtils.makeStoredPhoto(fromCGImage: cg),
                   let normalizedCG = ImageUtils.cgImage(fromJPEGData: stored.photo) else { return nil }
             return Captured(cgImage: normalizedCG, stored: stored)
         }.value

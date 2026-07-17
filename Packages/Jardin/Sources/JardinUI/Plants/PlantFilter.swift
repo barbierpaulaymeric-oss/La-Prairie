@@ -51,13 +51,15 @@ public struct PlantFilter: Equatable {
     }
 
     func matchesText(_ plant: PlantMO) -> Bool {
-        let haystacks: [String] = [
-            plant.displayName,
-            plant.species?.commonName ?? "",
-            plant.species?.scientificName ?? "",
-            plant.notes ?? "",
-            plant.zone?.name ?? "",
-        ] + plant.observationList.flatMap { [$0.note ?? ""] + $0.tags }
+        var haystacks: [String] = [plant.displayName]
+        haystacks.append(plant.species?.commonName ?? "")
+        haystacks.append(plant.species?.scientificName ?? "")
+        haystacks.append(plant.notes ?? "")
+        haystacks.append(plant.zone?.name ?? "")
+        for observation in plant.observationList {
+            if let note = observation.note { haystacks.append(note) }
+            haystacks.append(contentsOf: observation.tags)
+        }
 
         return haystacks.contains {
             $0.range(of: searchText, options: [.caseInsensitive, .diacriticInsensitive]) != nil
