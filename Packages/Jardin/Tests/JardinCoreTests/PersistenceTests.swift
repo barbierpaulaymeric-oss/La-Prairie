@@ -67,7 +67,53 @@ final class PersistenceTests: XCTestCase {
         XCTAssertEqual(try context.count(for: NSFetchRequest<NSFetchRequestResult>(entityName: "Harvest")), 0)
     }
 
-    func testDeleteZoneKeepsPlants() throws {
+    // Scénario « suppression de zone » découpé en étapes isolées : un crash CI
+    // dans l'une d'elles pointe l'opération Core Data exacte en cause.
+
+    func testDeleteZoneStepA_Instantiation() throws {
+        let zone = GardenZoneMO(context: context)
+        zone.name = "Potager"
+        try context.save()
+        XCTAssertNotNil(zone.id)
+    }
+
+    func testDeleteZoneStepB_LinkPlantAndSave() throws {
+        let zone = GardenZoneMO(context: context)
+        zone.name = "Potager"
+        let plant = PlantMO(context: context)
+        plant.name = "Carotte"
+        plant.zone = zone
+        try context.save()
+        XCTAssertNotNil(plant.zone)
+    }
+
+    func testDeleteZoneStepC_InverseAccess() throws {
+        let zone = GardenZoneMO(context: context)
+        zone.name = "Potager"
+        let plant = PlantMO(context: context)
+        plant.name = "Carotte"
+        plant.zone = zone
+        try context.save()
+        XCTAssertEqual((zone.plants as? Set<PlantMO>)?.count, 1,
+                       "L'inverse zone.plants doit être maintenu automatiquement")
+    }
+
+    func testDeleteZoneStepD_DeleteWithoutAccess() throws {
+        let zone = GardenZoneMO(context: context)
+        zone.name = "Potager"
+        let plant = PlantMO(context: context)
+        plant.name = "Carotte"
+        plant.zone = zone
+        try context.save()
+
+        context.delete(zone)
+        try context.save()
+
+        let count = try context.count(for: NSFetchRequest<NSFetchRequestResult>(entityName: "Plant"))
+        XCTAssertEqual(count, 1)
+    }
+
+    func testDeleteZoneStepE_DeleteThenAccessPlantZone() throws {
         let zone = GardenZoneMO(context: context)
         zone.name = "Potager"
         let plant = PlantMO(context: context)
